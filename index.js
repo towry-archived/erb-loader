@@ -28,21 +28,16 @@ module.exports = function(source) {
     var fd;
 
     try {
-      var fd = fs.openSync(fullpath, 'r');
-      result = fs.readSync(fd);
+      result = fs.readFileSync(fullpath, {encoding: 'utf-8'});
     } catch (e) {
       e.context = {
         error: 'Error when run webpack with loader: ' + LOADER_NAME,
         filename: this.resource,
       };
 
-      config.bail && console.error(e);
-    } finally {
-      if (fd) {
-        fs.close(fd);
-      }
-      // make sure the rails receive this error
-      process.exit(1); 
+      // config.bail && console.error(e);
+      throw new Error(e);
+      process.exit(1);
     }
 
     return result;
