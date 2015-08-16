@@ -13,7 +13,12 @@ module.exports = function(source) {
     
     var config = {
       root_path: getRootPath.call(this),
+      bail: getBailOption.call(this),
     };
+
+    if (! config.bail) {
+      return '';
+    }
 
     var filename = hash(this.resource);
     var fullpath = path.join(config.root_path, filename);
@@ -31,7 +36,7 @@ module.exports = function(source) {
         filename: this.resource,
       };
 
-      console.error(e);
+      config.bail && console.error(e);
     } finally {
       if (fd) {
         fs.close(fd);
@@ -62,4 +67,14 @@ function getRootPath () {
   root = root || '';
 
   return path.join(root, TMP_CACHE_PATH);
+}
+
+function getBailOption () {
+  var options = this.options;
+
+  if ('bail' in options) {
+    return true;
+  } 
+
+  return false;
 }
